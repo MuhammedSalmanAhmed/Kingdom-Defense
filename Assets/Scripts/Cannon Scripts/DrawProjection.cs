@@ -25,7 +25,7 @@ public class DrawProjection : MonoBehaviour
 
     void Update()
     {
-        if (!lineRenderer.enabled) return;  // Don't calculate if line is off
+        if (lineRenderer == null || !lineRenderer.enabled) return;  // Don't calculate if line is off
 
         lineRenderer.positionCount = numPoints;
         List<Vector3> points = new List<Vector3>();
@@ -33,6 +33,7 @@ public class DrawProjection : MonoBehaviour
         Vector3 startingVelocity = cannonController.ShotPoint.forward * cannonController.BlastPower;
         for (float t = 0; t < numPoints; t += timeBetweenPoints)
         {
+            if (this == null) break; // Stop calculation if object is destroyed
             Vector3 newPoint = startingPosition + t * startingVelocity;
             newPoint.y = startingPosition.y + startingVelocity.y * t + Physics.gravity.y / 2f * t * t;
             points.Add(newPoint);
@@ -44,16 +45,25 @@ public class DrawProjection : MonoBehaviour
             }
         }
 
-        lineRenderer.SetPositions(points.ToArray());
+        if (lineRenderer != null)
+        {
+            lineRenderer.SetPositions(points.ToArray());
+        }
     }
 
     public void ShowLine()
     {
-        lineRenderer.enabled = true;  // Show the line
+        if (lineRenderer != null)
+        {
+            lineRenderer.enabled = true;  // Show the line
+        }
     }
 
     public void HideLine()
     {
-        lineRenderer.enabled = false;  // Hide the line
+        if (lineRenderer != null)
+        {
+            lineRenderer.enabled = false;  // Hide the line
+        }
     }
 }
